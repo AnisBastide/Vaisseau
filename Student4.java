@@ -39,6 +39,7 @@ public class Student4 extends PodPlugIn {
         return a;
 
     }
+    boolean charge=false;
     //float angle();
 
 
@@ -75,74 +76,126 @@ public class Student4 extends PodPlugIn {
         float speedY = getShipSpeedY();
         float gamma = angle(speedX, speedY, X_vaisseau, Y_vaisseau);
         float c = getShipSpeed();
+        int x;
+
+        if(getShipBatteryLevel()<=30) {
+            charge=true;
+            incSpeed(0.1f);
 
 
-        //conditions (checkpoint)
-        if (Checkpoint_suivant == NBCheckpoint_race) {
-            Checkpoint_suivant = 0;
-            Y_next_checkpoint = getCheckPointPositionY(Checkpoint_suivant);
-            X_next_checkpoint = getCheckPointPositionX(Checkpoint_suivant);
 
 
-        } else {
-            Y_next_checkpoint = getCheckPointPositionY(Checkpoint_suivant + 1);
-            X_next_checkpoint = getCheckPointPositionX(Checkpoint_suivant + 1);
-        }
-        float distance_next_checkpoint = Distance(X_next_checkpoint, Y_next_checkpoint, X_vaisseau, Y_vaisseau);
-        if (getShipAngle() < 0) {
-            angle_vaisseau = (getShipAngle() + 360);
-        } else {
-            angle_vaisseau = getShipAngle();
-        }
+            if (getShipBatteryLevel()<=30 && charge==true) {
 
-        if (Checkpoint_Traversé == NBCheckpoint_race - 1) {
-            Checkpoint_suivant = 0;
-        }
+                x = 0;
+                while (x == 0) {
+                    boolean y = isCheckPointCharging(Checkpoint_suivant);
+                    if (y == true) {
+                        x = 1;
+                    } else {
+                        Checkpoint_suivant = Checkpoint_suivant + 1;
+                        if (Checkpoint_suivant == NBCheckpoint_race) {
+                            Checkpoint_suivant = 0;
+                        } else {
 
+                        }
+                    }
+                }
+                angle_vaisseau = getShipAngle();
+                if (getShipAngle() < 0) {
+                    angle_vaisseau = (getShipAngle() + 360);
+                } else {
+                    angle_vaisseau = getShipAngle();
+                }
+                float kappa;
+                X_checkpoint = getCheckPointPositionX(Checkpoint_suivant);
+                Y_checkpoint = getCheckPointPositionY(Checkpoint_suivant);
+                kappa = angle(X_vaisseau, Y_vaisseau, X_checkpoint, Y_checkpoint);
+                // turn
+                if (kappa > angle_vaisseau) {
+                    //turn(3);
+                    turn(5);
+                } else if (kappa < angle_vaisseau) {
+                    //turn(-3);
+                    turn(-5);
 
-        if (Checkpoint_Traversé == NBCheckpoint_race - 1) {
-            Previous_checkpoint = NBCheckpoint_race - 1;
-        } else {
-            Previous_checkpoint = (Checkpoint_Traversé % NBCheckpoint_race) - 1;
-            if (Previous_checkpoint == -1) {
-                Previous_checkpoint = NBCheckpoint_race - 1;
-
-            } else {
+                } else {
+                }
 
             }
         }
-        //variables
-        float X_previous_checkpoint = getCheckPointPositionX(Previous_checkpoint);
-        float Y_previous_checkpoint = getCheckPointPositionY(Previous_checkpoint);
-        distance_between = Distance(X_previous_checkpoint, Y_previous_checkpoint, X_checkpoint, Y_checkpoint);
-        float Beta = angle(X_next_checkpoint, Y_next_checkpoint, X_vaisseau, Y_vaisseau);
+            else if(charge==false && getShipBatteryLevel()>30){
+            //conditions (checkpoint)
+            if (Checkpoint_suivant == NBCheckpoint_race) {
+                Checkpoint_suivant = 0;
+                Y_next_checkpoint = getCheckPointPositionY(Checkpoint_suivant);
+                X_next_checkpoint = getCheckPointPositionX(Checkpoint_suivant);
 
 
-        //boost
-        if (getShipBoostLevel() == 100 && distance > 6) {
-            useBoost();
-        } else {
+            } else {
+                Y_next_checkpoint = getCheckPointPositionY(Checkpoint_suivant + 1);
+                X_next_checkpoint = getCheckPointPositionX(Checkpoint_suivant + 1);
+            }
+            float distance_next_checkpoint = Distance(X_next_checkpoint, Y_next_checkpoint, X_vaisseau, Y_vaisseau);
+            if (getShipAngle() < 0) {
+                angle_vaisseau = (getShipAngle() + 360);
+            } else {
+                angle_vaisseau = getShipAngle();
+            }
 
+            if (Checkpoint_Traversé == NBCheckpoint_race - 1) {
+                Checkpoint_suivant = 0;
+            }
+
+
+            if (Checkpoint_Traversé == NBCheckpoint_race - 1) {
+                Previous_checkpoint = NBCheckpoint_race - 1;
+            } else {
+                Previous_checkpoint = (Checkpoint_Traversé % NBCheckpoint_race) - 1;
+                if (Previous_checkpoint == -1) {
+                    Previous_checkpoint = NBCheckpoint_race - 1;
+
+                } else {
+
+                }
+            }
+            //variables
+            float X_previous_checkpoint = getCheckPointPositionX(Previous_checkpoint);
+            float Y_previous_checkpoint = getCheckPointPositionY(Previous_checkpoint);
+            distance_between = Distance(X_previous_checkpoint, Y_previous_checkpoint, X_checkpoint, Y_checkpoint);
+            float Beta = angle(X_next_checkpoint, Y_next_checkpoint, X_vaisseau, Y_vaisseau);
+
+
+            //boost
+//            if (getShipBoostLevel() == 100 && distance > 6) {
+//                useBoost();
+//            } else {
+//
+//            }
+            // turn
+            if (alpha2 > angle_vaisseau) {
+                //turn(3);
+                turn(5);
+            } else if (alpha2 < angle_vaisseau) {
+                //turn(-3);
+                turn(-5);
+
+            } else {
+            }
+            // accel or brake
+            if (distance < 1 && c < 0.5f) {
+                incSpeed(-0.5f);
+
+            } else {
+                incSpeed(1f);
+            }
         }
-        // turn
-        if (alpha2 > angle_vaisseau) {
-            //turn(3);
-            turn(5);
-        } else if (alpha2 < angle_vaisseau) {
-            //turn(-3);
-            turn(-5);
-
-        } else {
+        else if (getShipBatteryLevel()>80){
+            charge=false;
         }
 
 
-        // accel or brake
-        if (distance < 1 && c < 0.5f) {
-            incSpeed(-0.5f);
 
-        } else {
-            incSpeed(1f);
-        }
 
 
         // END OF CODE AREA
