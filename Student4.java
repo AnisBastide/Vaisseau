@@ -69,7 +69,22 @@ public class Student4 extends PodPlugIn {
         int Checkpoint_Traversé=getNbValidCheckPoints();
         int NBCheckpoint_race=getNbRaceCheckPoints();
         int Checkpoint_suivant=(Checkpoint_Traversé%NBCheckpoint_race)+1;
+        float X_next_checkpoint;
+        float Y_next_checkpoint;
         float angle_vaisseau;
+
+        if(Checkpoint_suivant==NBCheckpoint_race){
+            Checkpoint_suivant=0;
+            Y_next_checkpoint=getCheckPointPositionY(Checkpoint_suivant);
+            X_next_checkpoint=getCheckPointPositionX(Checkpoint_suivant);
+
+
+        }
+        else {
+            Y_next_checkpoint=getCheckPointPositionY(Checkpoint_suivant+1);
+            X_next_checkpoint=getCheckPointPositionX(Checkpoint_suivant+1);
+        }
+        float distance_next_checkpoint=Distance(X_next_checkpoint,Y_next_checkpoint,X_vaisseau,Y_vaisseau);
          if (getShipAngle()<0){
              angle_vaisseau=(getShipAngle()+360);
          }
@@ -86,6 +101,27 @@ public class Student4 extends PodPlugIn {
         Y_checkpoint=getCheckPointPositionY(Checkpoint_suivant);
         float alpha2=angle(X_vaisseau,Y_vaisseau,X_checkpoint,Y_checkpoint);
         float distance = Distance(Y_checkpoint,X_checkpoint,Y_vaisseau,X_vaisseau);
+        int Previous_checkpoint;
+        float distance_between;
+        if (Checkpoint_Traversé==NBCheckpoint_race-1){
+            Previous_checkpoint=NBCheckpoint_race-1;
+        }
+        else{
+            Previous_checkpoint=(Checkpoint_Traversé%NBCheckpoint_race)-1;
+            if (Previous_checkpoint==-1){
+                Previous_checkpoint=NBCheckpoint_race-1;
+
+            }
+            else{
+
+            }
+        }
+        float X_previous_checkpoint=getCheckPointPositionX(Previous_checkpoint);
+        float Y_previous_checkpoint=getCheckPointPositionY(Previous_checkpoint);
+        distance_between=Distance(X_previous_checkpoint,Y_previous_checkpoint,X_checkpoint,Y_checkpoint);
+
+
+
         if (getShipBoostLevel()==100 && distance>6){
             useBoost();
         }
@@ -97,16 +133,19 @@ public class Student4 extends PodPlugIn {
 
 
         // turn
-        if (alpha2>angle_vaisseau){
-            //turn(3);
-            turn(5);
-        }
-        else if (alpha2<angle_vaisseau){
-         //turn(-3);
-            turn(-5);
+        if (distance>2) {
+            if (alpha2 > angle_vaisseau) {
+                //turn(3);
+                turn(5);
+            } else if (alpha2 < angle_vaisseau) {
+                //turn(-3);
+                turn(-5);
 
-       }
-       else{
+            } else {
+
+            }
+        }
+        else {
 
         }
 
